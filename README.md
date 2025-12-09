@@ -76,3 +76,5 @@ Kopiere diesen Code in eine Textdatei und speichere sie als `quiz.json`:
 
 -   Da das Spiel Peer-to-Peer läuft, müssen sich Host und Clients idealerweise im **gleichen Netzwerk** befinden oder eine direkte Internetverbindung ohne strikte Firewalls haben.
 -   Die Datei muss nicht auf einem Webserver liegen, sie kann auch einfach vom USB-Stick oder Netzlaufwerk gestartet werden (sofern Internetzugriff für PeerJS vorhanden ist).
+-   Spieler können auch später zum Quiz hinzukommen, wenn sie die GAME PIN kennen.
+-   Unter moodle kann mit dem Parameter <b>moodleUser</b> Namen übergeben, so dass die Quizteilnehmernamen festgelegt sind und nicht von den Teilnehmern nachträglich geändert werden können.
