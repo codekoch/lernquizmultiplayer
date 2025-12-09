@@ -6,7 +6,7 @@ Ein einfaches, browserbasiertes Multiplayer-Quiz (ähnlich wie Kahoot!), das kom
 
 <b><a href=https://codekoch.github.io/lernquizmultiplayer/lernquizmultiplayer.html> Variante ohne QR-Code. Klicke hier, um es zu testen! </a></b>
 
-<b><a href=https://codekoch.github.io/lernquizmultiplayer/QuizVorlage_ElektrostatikQ1.json>Nutze für den Test z.B. diese json-Vorlage</a>
+<b><a href=https://codekoch.github.io/lernquizmultiplayer/QuizVorlage_ElektrostatikQ1.json>Nutze für den Test z.B. diese json-Vorlage (einfach per Copy & Paste als JSON Text einfügen)</a>
 
 ## 🚀 Funktionen
 
@@ -22,13 +22,13 @@ Ein einfaches, browserbasiertes Multiplayer-Quiz (ähnlich wie Kahoot!), das kom
 1.  Öffne die Datei `lernquizmultiplayer.html` in einem modernen Browser (Chrome, Firefox, Edge).
 2.  Klicke auf **"🎓 Spiel hosten"**.
 3.  Lade eine **JSON-Quizdatei** hoch oder füge den JSON-Code direkt ein.
-4.  Gib den Schülern den angezeigten **GAME PIN** (oben auf dem Bildschirm).
+4.  Gib den Schülern den angezeigten **GAME PIN** (oben auf dem Bildschirm) oder den **QR-Code**.
 5.  Warte, bis alle Schüler in der Lobby erschienen sind.
 6.  (Optional) Wähle "Fragen mischen" oder "Antworten mischen".
 7.  Klicke auf **"🚀 Quiz starten"**.
 
 ### Für die Schüler (Teilnehmer)
-1.  Öffne die Datei `lernquizmultiplayer.html` (oder die URL, wo sie liegt).
+1.  Scanne den den **QR-Code** oder öffne die Datei `lernquizmultiplayer.html` (oder die URL, wo sie liegt).
 2.  Klicke auf **"📱 Teilnehmen"**.
 3.  Gib den **GAME PIN** des Lehrers und deinen **Namen** ein.
 4.  Warte, bis das Spiel startet.
@@ -83,4 +83,4 @@ Kopiere diesen Code in eine Textdatei und speichere sie als `quiz.json`:
 -   Da das Spiel Peer-to-Peer läuft, müssen sich Host und Clients idealerweise im **gleichen Netzwerk** befinden oder eine direkte Internetverbindung ohne strikte Firewalls haben.
 -   Die Datei muss nicht auf einem Webserver liegen, sie kann auch einfach vom USB-Stick oder Netzlaufwerk gestartet werden (sofern Internetzugriff für PeerJS vorhanden ist).
 -   Spieler können auch später zum Quiz hinzukommen, wenn sie die GAME PIN kennen.
--   Unter moodle kann mit dem Parameter <b>moodleUser</b> Namen übergeben, so dass die Quizteilnehmernamen festgelegt sind und nicht von den Teilnehmern nachträglich geändert werden können.
+-   Unter moodle kann mit dem Parameter <b>moodleUser</b> Namen übergeben, so dass die Quizteilnehmernamen festgelegt sind und nicht von den Teilnehmern nachträglich geändert werden können. Unter moodle sollte allerdings nicht die Version mti dem QR-Code verwendet werden.
