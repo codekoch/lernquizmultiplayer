@@ -1,172 +1,373 @@
 <!DOCTYPE html>
 <html lang="de">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lernquiz Live</title>
-    
+
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
-    
+
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
     <style>
-        :root { 
-            --primary: #46178f; 
-            --secondary: #25076b; 
-            --correct: #66bf39; 
-            --wrong: #ff3355; 
-            --text: #333; 
+        :root {
+            --primary: #46178f;
+            --secondary: #25076b;
+            --correct: #66bf39;
+            --wrong: #ff3355;
+            --text: #333;
             --bg: #f2f2f2;
         }
-        
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background: var(--bg); 
-            margin: 0; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            min-height: 100vh; 
-            color: var(--text); 
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            color: var(--text);
         }
-        
-        h1, h2, h3 { margin: 0 0 15px 0; }
-        
+
+        h1,
+        h2,
+        h3 {
+            margin: 0 0 15px 0;
+        }
+
         /* Container Layouts */
-        .container { width: 95%; max-width: 1000px; margin-top: 20px; text-align: center; }
-        .hidden { display: none !important; }
-        
+        .container {
+            width: 95%;
+            max-width: 1000px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
         /* Karten-Design */
-        .card { 
-            background: white; 
-            padding: 25px; 
-            border-radius: 12px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
-            margin-bottom: 20px; 
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
         }
 
         /* Buttons & Inputs */
-        button { 
-            background: var(--primary); 
-            color: white; 
-            border: none; 
-            padding: 15px 30px; 
-            font-size: 1.1rem; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            margin: 5px; 
-            transition: all 0.2s; 
-            font-weight: bold; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+            transition: all 0.2s;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
-        button:hover { filter: brightness(1.1); transform: translateY(-2px); }
-        button:disabled { background: #ccc; cursor: not-allowed; transform: none; box-shadow: none; }
-        
-        input { 
-            padding: 15px; 
-            font-size: 1.2rem; 
-            border-radius: 8px; 
-            border: 2px solid #ddd; 
-            width: 80%; 
+
+        button:hover {
+            filter: brightness(1.1);
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        input {
+            padding: 15px;
+            font-size: 1.2rem;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+            width: 80%;
             max-width: 400px;
-            margin-bottom: 15px; 
+            margin-bottom: 15px;
             transition: border-color 0.3s;
         }
-        input:focus { border-color: var(--primary); outline: none; }
-        input[readonly] { background-color: #e0e0e0; color: #666; cursor: not-allowed; }
+
+        input:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+
+        input[readonly] {
+            background-color: #e0e0e0;
+            color: #666;
+            cursor: not-allowed;
+        }
 
         /* Header Area */
-        .game-header { 
-            background: var(--secondary); 
-            color: white; 
-            width: 100%; 
-            padding: 15px; 
-            text-align: center; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2); 
-            position: sticky; top: 0; z-index: 100;
+        .game-header {
+            background: var(--secondary);
+            color: white;
+            width: 100%;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
-        #game-id-display { font-size: 2.2rem; font-weight: 800; letter-spacing: 3px; color: #ffeb3b; }
-        
+
+        #game-id-display {
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: 3px;
+            color: #ffeb3b;
+        }
+
         /* HOST: Frage & Optionen */
-        .question-text { font-size: 2rem; margin: 30px 0; font-weight: 600; line-height: 1.3; }
-        .host-options { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; text-align: left; }
-        .host-option { 
-            padding: 25px; 
-            background: white; 
-            border: 3px solid #eee; 
-            border-radius: 10px; 
-            font-size: 1.3rem; 
-            display: flex; 
-            align-items: center; 
+        .question-text {
+            font-size: 2rem;
+            margin: 30px 0;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        .host-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            text-align: left;
+        }
+
+        .host-option {
+            padding: 25px;
+            background: white;
+            border: 3px solid #eee;
+            border-radius: 10px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
             transition: all 0.3s;
         }
-        .host-option.correct-reveal { 
-            background: var(--correct); 
-            color: white; 
-            border-color: var(--correct); 
+
+        .host-option.correct-reveal {
+            background: var(--correct);
+            color: white;
+            border-color: var(--correct);
             transform: scale(1.02);
         }
-        .opt-label { font-weight: bold; margin-right: 15px; display: inline-block; width: 35px; font-size: 1.5rem; }
+
+        .opt-label {
+            font-weight: bold;
+            margin-right: 15px;
+            display: inline-block;
+            width: 35px;
+            font-size: 1.5rem;
+        }
 
         /* HOST: Leaderboard */
-        .leaderboard-entry { 
-            display: flex; justify-content: space-between; 
-            padding: 15px; border-bottom: 1px solid #eee; 
-            font-size: 1.4rem; animation: slideIn 0.5s ease; 
+        .leaderboard-entry {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            font-size: 1.4rem;
+            animation: slideIn 0.5s ease;
         }
-        .leaderboard-entry:first-child { 
-            font-weight: bold; font-size: 1.6rem; 
-            color: var(--primary); background: #f0f0ff; border-radius: 8px;
+
+        .leaderboard-entry:first-child {
+            font-weight: bold;
+            font-size: 1.6rem;
+            color: var(--primary);
+            background: #f0f0ff;
+            border-radius: 8px;
         }
-        .lb-rank { font-weight: bold; color: #888; width: 50px; }
-        .lb-score { font-weight: bold; }
+
+        .lb-rank {
+            font-weight: bold;
+            color: #888;
+            width: 50px;
+        }
+
+        .lb-score {
+            font-weight: bold;
+        }
 
         /* CLIENT: Buttons Grid */
-        .client-options { 
-            display: grid; grid-template-columns: 1fr 1fr; 
-            gap: 15px; height: 60vh; max-height: 500px; 
+        .client-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            height: 60vh;
+            max-height: 500px;
         }
-        .client-btn { 
-            font-size: 2rem; font-weight: bold; 
-            height: 100%; width: 100%; 
-            border-radius: 12px; color: white; 
-            display: flex; justify-content: center; align-items: center; 
-            cursor: pointer; box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+
+        .client-btn {
+            font-size: 2rem;
+            font-weight: bold;
+            height: 100%;
+            width: 100%;
+            border-radius: 12px;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 0 rgba(0, 0, 0, 0.2);
             transition: transform 0.1s;
         }
-        .client-btn:active { transform: translateY(4px); box-shadow: none; }
-        
+
+        .client-btn:active {
+            transform: translateY(4px);
+            box-shadow: none;
+        }
+
         /* Farben für Antworten */
-        .bg-0 { background-color: #e21b3c; } /* Rot */
-        .bg-1 { background-color: #1368ce; } /* Blau */
-        .bg-2 { background-color: #d89e00; } /* Gelb */
-        .bg-3 { background-color: #26890c; } /* Grün */
-        .fg-0 { color: #e21b3c; } 
-        .fg-1 { color: #1368ce; } 
-        .fg-2 { color: #d89e00; } 
-        .fg-3 { color: #26890c; }
+        .bg-0 {
+            background-color: #e21b3c;
+        }
+
+        /* Rot */
+        .bg-1 {
+            background-color: #1368ce;
+        }
+
+        /* Blau */
+        .bg-2 {
+            background-color: #d89e00;
+        }
+
+        /* Gelb */
+        .bg-3 {
+            background-color: #26890c;
+        }
+
+        /* Grün */
+        .fg-0 {
+            color: #e21b3c;
+        }
+
+        .fg-1 {
+            color: #1368ce;
+        }
+
+        .fg-2 {
+            color: #d89e00;
+        }
+
+        .fg-3 {
+            color: #26890c;
+        }
 
         /* Feedback Screen */
-        .feedback-screen { padding: 40px; border-radius: 12px; color: white; margin-top: 20px; }
-        .fb-correct { background-color: var(--correct); }
-        .fb-wrong { background-color: var(--wrong); }
-        
-        /* Player List Animation */
-        #player-list { list-style: none; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
-        #player-list li { background: var(--primary); color: white; padding: 8px 18px; border-radius: 50px; animation: popIn 0.3s ease; font-weight: bold; }
+        .feedback-screen {
+            padding: 40px;
+            border-radius: 12px;
+            color: white;
+            margin-top: 20px;
+        }
 
-        @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
-        @keyframes slideIn { from { transform: translateX(-20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .fb-correct {
+            background-color: var(--correct);
+        }
+
+        .fb-wrong {
+            background-color: var(--wrong);
+        }
+
+        /* Player List Animation */
+        #player-list {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        #player-list li {
+            background: var(--primary);
+            color: white;
+            padding: 8px 18px;
+            border-radius: 50px;
+            animation: popIn 0.3s ease;
+            font-weight: bold;
+        }
+
+        @keyframes popIn {
+            from {
+                transform: scale(0);
+            }
+
+            to {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(-20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
 
         /* Responsive */
         @media (max-width: 600px) {
-            .host-options { grid-template-columns: 1fr; }
-            .question-text { font-size: 1.5rem; }
-            .container { width: 100%; padding: 10px; margin-top: 0; }
+            .host-options {
+                grid-template-columns: 1fr;
+            }
+
+            .question-text {
+                font-size: 1.5rem;
+            }
+
+            .container {
+                width: 100%;
+                padding: 10px;
+                margin-top: 0;
+            }
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            text-align: left;
+        }
+
+        .close-btn {
+            background: #aaa;
+            margin-left: 10px;
         }
     </style>
 </head>
+
 <body>
 
     <div id="view-start" class="container">
@@ -175,7 +376,8 @@
             <p style="font-size: 1.2rem; color: #666;">Das interaktive Klassenzimmer-Quiz</p>
         </div>
         <div class="card" style="max-width: 500px; margin: 40px auto;">
-            <button onclick="initHost()" style="width: 100%; margin-bottom: 15px; font-size: 1.3rem;">🎓 Spiel hosten (Lehrer)</button>
+            <button onclick="initHost()" style="width: 100%; margin-bottom: 15px; font-size: 1.3rem;">🎓 Spiel hosten
+                (Lehrer)</button>
             <button onclick="initClient()" style="width: 100%; font-size: 1.3rem;">📱 Teilnehmen (Schüler)</button>
         </div>
     </div>
@@ -184,14 +386,18 @@
         <div class="game-header">
             GAME PIN: <span id="game-id-display">LADEN...</span>
         </div>
-        
+
         <div id="host-lobby" class="card">
             <h2>Lobby</h2>
             <div style="border: 2px dashed #ccc; padding: 20px; margin: 20px 0; border-radius: 8px;">
-                <p><b>Schritt 1:</b> JSON-Quizdatei wählen</p>
+                <p><b>Schritt 1:</b> JSON-Quizdatei wählen oder Text eingeben</p>
                 <input type="file" id="file-input" accept=".json">
+                <br><br>
+                <span>Oder: </span>
+                <button onclick="openJsonModal()" style="padding: 10px 20px; font-size: 1rem;">📝 JSON Text
+                    einfügen</button>
             </div>
-            
+
             <div style="margin-top: 20px;">
                 <p><b>Schritt 2:</b> Warten auf Spieler (<span id="player-count">0</span>)</p>
                 <ul id="player-list"></ul>
@@ -206,22 +412,38 @@
                     <span id="q-counter">Frage 1/?</span>
                     <span id="answers-received">0 Antworten</span>
                 </div>
-                
+
                 <h2 id="host-question-text" class="question-text">Frage wird geladen...</h2>
-                
+
                 <div id="host-options-container" class="host-options"></div>
             </div>
-            
-            <div style="position: fixed; bottom: 0; left: 0; width: 100%; background: white; padding: 15px; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); display: flex; justify-content: center; gap: 20px;">
+
+            <div
+                style="position: fixed; bottom: 0; left: 0; width: 100%; background: white; padding: 15px; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); display: flex; justify-content: center; gap: 20px;">
                 <button id="btn-resolve" onclick="resolveQuestion()">Auflösung zeigen</button>
                 <button id="btn-show-ranking" class="hidden" onclick="showLeaderboard()">🏆 Ranking & Weiter</button>
             </div>
-            <div style="height: 80px;"></div> </div>
+            <div style="height: 80px;"></div>
+        </div>
 
         <div id="host-leaderboard" class="hidden">
             <h1>🏆 Top 5 Hitliste</h1>
             <div id="leaderboard-list" class="card" style="text-align: left;"></div>
             <button onclick="nextQuestion()" style="font-size: 1.5rem;">Nächste Frage ➡</button>
+        </div>
+
+        <!-- JSON Modal -->
+        <div id="json-modal" class="modal-overlay hidden">
+            <div class="modal-content">
+                <h2>JSON Quiz Daten einfügen</h2>
+                <textarea id="json-text-input"
+                    style="width: 100%; height: 200px; padding: 10px; border: 1px solid #ccc; font-family: monospace;"
+                    placeholder='{"title": "Mein Quiz", "questions": [...]}'></textarea>
+                <div style="text-align: right; margin-top: 15px;">
+                    <button onclick="loadJsonFromText()">💾 Laden</button>
+                    <button onclick="closeJsonModal()" class="close-btn">Abbrechen</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -312,18 +534,43 @@
         // ==========================================
         // HOST LOGIC (Lehrer)
         // ==========================================
-        
+
+        // Modal Funktionen
+        function openJsonModal() {
+            document.getElementById('json-modal').classList.remove('hidden');
+            document.getElementById('json-text-input').value = '';
+        }
+
+        function closeJsonModal() {
+            document.getElementById('json-modal').classList.add('hidden');
+        }
+
+        function loadJsonFromText() {
+            const text = document.getElementById('json-text-input').value;
+            try {
+                processQuizData(JSON.parse(text));
+                closeJsonModal();
+            } catch (e) { alert("Ungültiges JSON: " + e.message); }
+        }
+
+        function processQuizData(data) {
+            quizData = data;
+            if (!quizData.questions || !Array.isArray(quizData.questions)) throw new Error("Falsches Format: 'questions' Array fehlt");
+            document.getElementById('btn-start-game').disabled = false;
+            alert(`Quiz "${quizData.title || 'Unbenannt'}" geladen: ${quizData.questions.length} Fragen.`);
+        }
+
         function initHost() {
             showView('view-host');
             // Einfache 4-stellige Zahl als ID generieren
-            const randomId = Math.floor(1000 + Math.random() * 9000); 
+            const randomId = Math.floor(1000 + Math.random() * 9000);
             const fullId = 'quiz-' + randomId;
 
             peer = new Peer(fullId);
 
-            peer.on('open', (id) => { 
+            peer.on('open', (id) => {
                 // Zeige nur die Zahl an, um es einfacher zu machen (wir addieren quiz- im Code)
-                document.getElementById('game-id-display').innerText = randomId; 
+                document.getElementById('game-id-display').innerText = randomId;
             });
 
             peer.on('connection', (c) => {
@@ -335,16 +582,13 @@
             });
 
             // Datei Upload
-            document.getElementById('file-input').addEventListener('change', function(e) {
+            document.getElementById('file-input').addEventListener('change', function (e) {
                 const file = e.target.files[0];
                 const reader = new FileReader();
-                reader.onload = function(event) {
+                reader.onload = function (event) {
                     try {
-                        quizData = JSON.parse(event.target.result);
-                        if(!quizData.questions || !Array.isArray(quizData.questions)) throw new Error("Falsches Format");
-                        document.getElementById('btn-start-game').disabled = false;
-                        alert(`Quiz "${quizData.title || 'Unbenannt'}" geladen: ${quizData.questions.length} Fragen.`);
-                    } catch(e) { alert("Ungültiges JSON: " + e.message); }
+                        processQuizData(JSON.parse(event.target.result));
+                    } catch (e) { alert("Ungültiges JSON: " + e.message); }
                 };
                 reader.readAsText(file);
             });
@@ -360,11 +604,18 @@
                 let safeName = (data.name || "Gast").substring(0, 15);
                 // HTML Escaping für Sicherheit
                 safeName = safeName.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-                
+
                 players[peerId] = { name: safeName, score: 0 };
                 updatePlayerList();
                 connections[peerId].send({ type: 'JOIN_CONFIRM' });
-            } 
+
+                // SPÄTER BEITRITT: Wenn Frage läuft, direkt senden
+                if (questionActive && quizData) {
+                    const q = quizData.questions[currentQuestionIndex];
+                    const clientOptions = q.options.map((o, idx) => ({ id: o.id, index: idx }));
+                    connections[peerId].send({ type: 'QUESTION', options: clientOptions });
+                }
+            }
             else if (data.type === 'ANSWER' && questionActive) {
                 // Antwort verarbeiten
                 answersCount++;
@@ -372,7 +623,7 @@
 
                 const q = quizData.questions[currentQuestionIndex];
                 const isCorrect = checkAnswer(q, data.answerId);
-                
+
                 let points = 0;
                 if (isCorrect) {
                     const elapsed = (Date.now() - questionStartTime) / 1000;
@@ -385,7 +636,7 @@
 
                 const option = q.options.find(o => o.id === data.answerId);
                 const feedbackText = option ? option.feedback : "";
-                
+
                 connections[peerId].send({
                     type: 'RESULT',
                     correct: isCorrect,
@@ -433,16 +684,16 @@
             }
 
             const q = quizData.questions[currentQuestionIndex];
-            
+
             // UI Reset
             document.getElementById('q-counter').innerText = `Frage ${currentQuestionIndex + 1} von ${quizData.questions.length}`;
             answersCount = 0;
             document.getElementById('answers-received').innerText = "0 Antworten";
             document.getElementById('host-question-text').innerHTML = q.text;
-            
+
             const container = document.getElementById('host-options-container');
             container.innerHTML = '';
-            
+
             // Buttons Host
             document.getElementById('btn-resolve').classList.remove('hidden');
             document.getElementById('btn-show-ranking').classList.add('hidden');
@@ -458,7 +709,7 @@
             });
 
             // LaTeX rendern
-            if(window.MathJax) MathJax.typeset();
+            if (window.MathJax) MathJax.typeset();
 
             questionStartTime = Date.now();
             questionActive = true;
@@ -499,7 +750,7 @@
             sorted.slice(0, 5).forEach((p, i) => {
                 const div = document.createElement('div');
                 div.className = 'leaderboard-entry';
-                div.innerHTML = `<span class="lb-rank">#${i+1}</span> <span>${p.name}</span> <span class="lb-score">${p.score}</span>`;
+                div.innerHTML = `<span class="lb-rank">#${i + 1}</span> <span>${p.name}</span> <span class="lb-score">${p.score}</span>`;
                 list.appendChild(div);
             });
         }
@@ -526,33 +777,33 @@
         function joinGame() {
             const rawId = document.getElementById('input-game-id').value.trim();
             const name = document.getElementById('input-player-name').value.trim();
-            
-            if(!rawId || !name) return alert("Bitte ID und Name eingeben!");
-            
+
+            if (!rawId || !name) return alert("Bitte ID und Name eingeben!");
+
             // Wir erlauben Eingabe von "1234" oder "quiz-1234"
             const gameId = rawId.startsWith('quiz-') ? rawId : 'quiz-' + rawId;
 
             document.getElementById('client-status').innerText = "Verbinde...";
-            
-            peer = new Peer(); 
+
+            peer = new Peer();
             peer.on('open', () => {
                 conn = peer.connect(gameId);
-                
+
                 conn.on('open', () => {
                     document.getElementById('client-status').innerText = "Angemeldet!";
                     conn.send({ type: 'JOIN', name: name });
                 });
 
                 conn.on('data', handleClientData);
-                
+
                 conn.on('close', () => {
                     alert("Verbindung zum Host verloren.");
                     location.reload();
                 });
-                
+
                 // Timeout Schutz
                 setTimeout(() => {
-                    if(!conn.open) document.getElementById('client-status').innerText = "Host nicht gefunden. ID prüfen?";
+                    if (!conn.open) document.getElementById('client-status').innerText = "Host nicht gefunden. ID prüfen?";
                 }, 5000);
             });
         }
@@ -571,11 +822,11 @@
             else if (data.type === 'RESULT') {
                 document.getElementById('client-controls').classList.add('hidden');
                 document.getElementById('client-feedback').classList.remove('hidden');
-                
+
                 const card = document.getElementById('feedback-card');
                 const title = document.getElementById('feedback-title');
                 const points = document.getElementById('feedback-points');
-                
+
                 if (data.correct) {
                     card.className = "feedback-screen fb-correct";
                     title.innerText = "RICHTIG! 🥳";
@@ -600,7 +851,7 @@
             const container = document.getElementById('client-options-container');
             container.innerHTML = '';
             const labels = ["A", "B", "C", "D"]; // Dreieck, Kreis, etc. möglich via SVG
-            
+
             options.forEach((opt) => {
                 const btn = document.createElement('div');
                 btn.className = `client-btn bg-${opt.index % 4}`;
@@ -617,4 +868,5 @@
         }
     </script>
 </body>
+
 </html>
