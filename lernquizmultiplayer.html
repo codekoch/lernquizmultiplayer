@@ -838,6 +838,9 @@
                 }
                 document.getElementById('feedback-text').innerHTML = data.feedback || "";
                 document.getElementById('client-total-score').innerText = data.totalScore + " Punkte";
+
+                // LaTeX im Feedback rendern
+                if (window.MathJax) MathJax.typeset();
             }
             else if (data.type === 'GAME_OVER') {
                 document.getElementById('client-waiting').classList.remove('hidden');
