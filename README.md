@@ -3,6 +3,7 @@
 Ein einfaches, browserbasiertes Multiplayer-Quiz (ähnlich wie Kahoot!), das komplett ohne Server-Installation funktioniert. Es läuft direkt im Browser und nutzt Peer-to-Peer-Technologie (PeerJS) zur Kommunikation zwischen Lehrer (Host) und Schülern (Clients).
 
 <b><a href=https://codekoch.github.io/lernquizmultiplayer/lernquizmultiplayer.html> Klicke hier, um es zu testen! </a></b>
+<b><a href=https://codekoch.github.io/lernquizmultiplayer/QuizVorlage_ElektrostatikQ1.json>Nutze für den Test z.B. diese json-Vorlage</a>
 
 ## 🚀 Funktionen
 
