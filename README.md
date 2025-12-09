@@ -2,6 +2,8 @@
 
 Ein einfaches, browserbasiertes Multiplayer-Quiz (ähnlich wie Kahoot!), das komplett ohne Server-Installation funktioniert. Es läuft direkt im Browser und nutzt Peer-to-Peer-Technologie (PeerJS) zur Kommunikation zwischen Lehrer (Host) und Schülern (Clients).
 
+<b><a href=https://codekoch.github.io/lernquizmultiplayer/lernquizmultiplayer.html> Klicke hier, um es zu testen! </a></b>
+
 ## 🚀 Funktionen
 
 -   **Kein Server nötig:** Einfach die HTML-Datei öffnen.
