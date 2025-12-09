@@ -1,0 +1,294 @@
+{
+  "title": "Quiz: Ganzrationale Funktionen",
+  "passPercentage": 70,
+  "questions": [
+    {
+      "id": 1,
+      "text": "Welche der folgenden Funktionsterme beschreiben eine ganzrationale Funktion (Polynomfunktion)?",
+      "options": [
+        {
+          "id": "q1_a",
+          "text": "\\( f(x) = 4x^3 - 2x^2 + 1 \\)",
+          "correct": true,
+          "feedback": "Richtig! Die Exponenten sind natürliche Zahlen."
+        },
+        {
+          "id": "q1_b",
+          "text": "\\( f(x) = \\frac{1}{x} + x^2 \\)",
+          "correct": false,
+          "feedback": "Falsch. Ein x im Nenner entspricht einem negativen Exponenten."
+        },
+        {
+          "id": "q1_c",
+          "text": "\\( f(x) = 5 \\)",
+          "correct": true,
+          "feedback": "Richtig! Das ist eine ganzrationale Funktion vom Grad 0 (Konstante)."
+        },
+        {
+          "id": "q1_d",
+          "text": "\\( f(x) = 3\\sqrt{x} - 2 \\)",
+          "correct": false,
+          "feedback": "Falsch. Die Wurzel entspricht dem Exponenten 0,5, was keine natürliche Zahl ist."
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "text": "Gegeben ist die Funktion \\( f(x) = -2x^4 + 3x^2 - 5x + 1 \\). Welche Aussagen zum Grad und Koeffizienten sind wahr?",
+      "options": [
+        {
+          "id": "q2_a",
+          "text": "Der Grad der Funktion ist 4.",
+          "correct": true,
+          "feedback": "Korrekt, der höchste Exponent bestimmt den Grad."
+        },
+        {
+          "id": "q2_b",
+          "text": "Der Leitkoeffizient ist 1.",
+          "correct": false,
+          "feedback": "Falsch. Der Leitkoeffizient ist die Zahl vor der höchsten Potenz, also -2."
+        },
+        {
+          "id": "q2_c",
+          "text": "Der Leitkoeffizient ist -2.",
+          "correct": true,
+          "feedback": "Richtig."
+        },
+        {
+          "id": "q2_d",
+          "text": "Der Grad der Funktion ist 3.",
+          "correct": false,
+          "feedback": "Falsch, die höchste Potenz ist 4."
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "text": "Betrachte die Symmetrie der Funktion \\( f(x) = 3x^4 - 2x^2 + 7 \\). Welche Aussagen treffen zu?",
+      "options": [
+        {
+          "id": "q3_a",
+          "text": "Der Graph ist punktsymmetrisch zum Ursprung.",
+          "correct": false,
+          "feedback": "Falsch. Das wäre der Fall, wenn nur ungerade Exponenten vorkämen."
+        },
+        {
+          "id": "q3_b",
+          "text": "Der Graph ist achsensymmetrisch zur y-Achse.",
+          "correct": true,
+          "feedback": "Richtig, da nur gerade Exponenten (4, 2, 0) vorkommen."
+        },
+        {
+          "id": "q3_c",
+          "text": "Es gilt \\( f(-x) = f(x) \\).",
+          "correct": true,
+          "feedback": "Richtig, das ist die Bedingung für Achsensymmetrie."
+        },
+        {
+          "id": "q3_d",
+          "text": "Die Funktion besitzt keine Symmetrie.",
+          "correct": false,
+          "feedback": "Falsch, sie ist achsensymmetrisch."
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "text": "Welches Verhalten zeigt der Graph von \\( f(x) = -x^3 + 2x^2 \\) für \\( x \\to \\pm \\infty \\)?",
+      "options": [
+        {
+          "id": "q4_a",
+          "text": "Für \\( x \\to \\infty \\) geht \\( f(x) \\to -\\infty \\).",
+          "correct": true,
+          "feedback": "Richtig. Der Term \\(-x^3\\) dominiert."
+        },
+        {
+          "id": "q4_b",
+          "text": "Für \\( x \\to -\\infty \\) geht \\( f(x) \\to -\\infty \\).",
+          "correct": false,
+          "feedback": "Falsch. \\(-(- \\infty)^3\\) wird positiv."
+        },
+        {
+          "id": "q4_c",
+          "text": "Für \\( x \\to -\\infty \\) geht \\( f(x) \\to \\infty \\).",
+          "correct": true,
+          "feedback": "Richtig. Minus mal Minus mal Minus gibt Minus, mit dem Vorfaktor Minus wird es Plus."
+        },
+        {
+          "id": "q4_d",
+          "text": "Der Graph verläuft von links unten nach rechts oben.",
+          "correct": false,
+          "feedback": "Falsch, er kommt von links oben und geht nach rechts unten."
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "text": "Wie viele Nullstellen kann eine ganzrationale Funktion vom Grad \\( n \\) maximal haben?",
+      "options": [
+        {
+          "id": "q5_a",
+          "text": "Genau \\( n \\) Nullstellen.",
+          "correct": false,
+          "feedback": "Nicht zwingend 'genau', es können auch weniger sein."
+        },
+        {
+          "id": "q5_b",
+          "text": "Maximal \\( n \\) Nullstellen.",
+          "correct": true,
+          "feedback": "Richtig. Der Grad gibt die Obergrenze an."
+        },
+        {
+          "id": "q5_c",
+          "text": "Mindestens 1 Nullstelle, wenn \\( n \\) ungerade ist.",
+          "correct": true,
+          "feedback": "Korrekt, ungerade Polynome müssen die x-Achse mindestens einmal schneiden."
+        },
+        {
+          "id": "q5_d",
+          "text": "Unendlich viele.",
+          "correct": false,
+          "feedback": "Falsch (außer für die Nullfunktion)."
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "text": "Gegeben ist die Funktion in Produktform: \\( f(x) = 2 \\cdot x \\cdot (x - 3) \\cdot (x + 2)^2 \\). Wo liegen die Nullstellen?",
+      "options": [
+        {
+          "id": "q6_a",
+          "text": "\\( x_1 = 0 \\)",
+          "correct": true,
+          "feedback": "Richtig, wegen des Faktors \\( x \\)."
+        },
+        {
+          "id": "q6_b",
+          "text": "\\( x_2 = 3 \\)",
+          "correct": true,
+          "feedback": "Richtig, wegen des Faktors \\( (x-3) \\)."
+        },
+        {
+          "id": "q6_c",
+          "text": "\\( x_3 = -2 \\)",
+          "correct": true,
+          "feedback": "Richtig, wegen des Faktors \\( (x+2) \\)."
+        },
+        {
+          "id": "q6_d",
+          "text": "\\( x_4 = 2 \\)",
+          "correct": false,
+          "feedback": "Falsch. Der Vorfaktor 2 beeinflusst die Nullstellen nicht."
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "text": "Welche Aussage über das Verhalten des Graphen an der Stelle \\( x = 0 \\) ist für \\( f(x) = 0,5x^3 - 4x + 2 \\) richtig?",
+      "options": [
+        {
+          "id": "q7_a",
+          "text": "Der Graph verläuft durch den Ursprung.",
+          "correct": false,
+          "feedback": "Falsch, \\( f(0) = 2 \\)."
+        },
+        {
+          "id": "q7_b",
+          "text": "Der y-Achsenabschnitt ist 2.",
+          "correct": true,
+          "feedback": "Richtig, das Absolutglied gibt den y-Achsenabschnitt an."
+        },
+        {
+          "id": "q7_c",
+          "text": "Der Graph hat dort eine Nullstelle.",
+          "correct": false,
+          "feedback": "Nein, der Funktionswert ist ungleich 0."
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "text": "Welche Bedingungen müssen für einen Hochpunkt an der Stelle \\( x_0 \\) erfüllt sein?",
+      "options": [
+        {
+          "id": "q8_a",
+          "text": "\\( f'(x_0) = 0 \\) und \\( f''(x_0) < 0 \\)",
+          "correct": true,
+          "feedback": "Richtig. Notwendige Bedingung und hinreichende Bedingung für ein Maximum."
+        },
+        {
+          "id": "q8_b",
+          "text": "\\( f'(x_0) = 0 \\) und Vorzeichenwechsel von + nach - bei \\( f' \\).",
+          "correct": true,
+          "feedback": "Richtig, das ist das Vorzeichenwechselkriterium."
+        },
+        {
+          "id": "q8_c",
+          "text": "\\( f'(x_0) = 0 \\) und \\( f''(x_0) > 0 \\)",
+          "correct": false,
+          "feedback": "Falsch, das wäre ein Tiefpunkt."
+        },
+        {
+          "id": "q8_d",
+          "text": "\\( f(x_0) = 0 \\)",
+          "correct": false,
+          "feedback": "Falsch, das wäre eine Nullstelle."
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "text": "Wie lautet die erste Ableitung von \\( f(x) = \\frac{1}{4}x^4 - x^2 + 10 \\)?",
+      "options": [
+        {
+          "id": "q9_a",
+          "text": "\\( f'(x) = x^3 - 2x \\)",
+          "correct": true,
+          "feedback": "Korrekt."
+        },
+        {
+          "id": "q9_b",
+          "text": "\\( f'(x) = 4x^3 - 2x \\)",
+          "correct": false,
+          "feedback": "Falsch, du hast den Faktor 1/4 vergessen zu verrechnen."
+        },
+        {
+          "id": "q9_c",
+          "text": "\\( f'(x) = x^3 - 2x + 10 \\)",
+          "correct": false,
+          "feedback": "Falsch, Konstanten fallen beim Ableiten weg."
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "text": "Was ist ein Sattelpunkt?",
+      "options": [
+        {
+          "id": "q10_a",
+          "text": "Ein Wendepunkt mit waagerechter Tangente.",
+          "correct": true,
+          "feedback": "Richtig."
+        },
+        {
+          "id": "q10_b",
+          "text": "Es gilt \\( f'(x_0) = 0 \\) und \\( f''(x_0) = 0 \\) und \\( f'''(x_0) \\neq 0 \\).",
+          "correct": true,
+          "feedback": "Richtig, das sind die Bedingungen."
+        },
+        {
+          "id": "q10_c",
+          "text": "Ein Punkt, an dem die Steigung unendlich ist.",
+          "correct": false,
+          "feedback": "Falsch."
+        },
+        {
+          "id": "q10_d",
+          "text": "Ein Extrempunkt ohne Krümmung.",
+          "correct": false,
+          "feedback": "Falsch, ein Sattelpunkt ist eben *kein* Extrempunkt."
+        }
+      ]
+    }
+  ]
+}
