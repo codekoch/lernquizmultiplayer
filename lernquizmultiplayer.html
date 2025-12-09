@@ -270,16 +270,6 @@
         // --- KONFIGURATION ---
         const TIME_LIMIT_SEC = 30; // Basis für Punkteberechnung (nicht Hard-Limit)
         const MAX_POINTS = 1000;
-        
-        // STUN Server Config (Wichtig für Firewall/NAT Traversal)
-        const PEER_CONFIG = {
-            config: {
-                iceServers: [
-                    { urls: 'stun:stun.l.google.com:19302' },
-                    { urls: 'stun:stun1.l.google.com:19302' }
-                ]
-            }
-        };
 
         // --- GLOBALS ---
         let peer = null;
@@ -307,6 +297,8 @@
                 if (nameInput) {
                     nameInput.value = moodleName;
                     nameInput.readOnly = true;
+                    // Wenn Name da ist, gehen wir davon aus, dass es ein Schüler ist
+                    // initClient(); // Optional: Sofort zur Client-Ansicht wechseln
                 }
             }
         });
@@ -327,11 +319,10 @@
             const randomId = Math.floor(1000 + Math.random() * 9000); 
             const fullId = 'quiz-' + randomId;
 
-            // Peer mit Google STUN Server erstellen
-            peer = new Peer(fullId, PEER_CONFIG);
+            peer = new Peer(fullId);
 
             peer.on('open', (id) => { 
-                // Zeige nur die Zahl an
+                // Zeige nur die Zahl an, um es einfacher zu machen (wir addieren quiz- im Code)
                 document.getElementById('game-id-display').innerText = randomId; 
             });
 
@@ -340,7 +331,7 @@
             });
 
             peer.on('error', (err) => {
-                alert("Netzwerkfehler: " + err);
+                alert("Verbindungsfehler (Evtl. Seite neu laden): " + err);
             });
 
             // Datei Upload
@@ -367,13 +358,15 @@
         function handleHostData(peerId, data) {
             if (data.type === 'JOIN') {
                 let safeName = (data.name || "Gast").substring(0, 15);
-                safeName = safeName.replace(/</g, "&lt;").replace(/>/g, "&gt;"); // XSS Schutz
+                // HTML Escaping für Sicherheit
+                safeName = safeName.replace(/</g, "&lt;").replace(/>/g, "&gt;");
                 
                 players[peerId] = { name: safeName, score: 0 };
                 updatePlayerList();
                 connections[peerId].send({ type: 'JOIN_CONFIRM' });
             } 
             else if (data.type === 'ANSWER' && questionActive) {
+                // Antwort verarbeiten
                 answersCount++;
                 document.getElementById('answers-received').innerText = answersCount + " Antworten";
 
@@ -470,7 +463,7 @@
             questionStartTime = Date.now();
             questionActive = true;
 
-            // An Clients senden
+            // An Clients senden (nur IDs und Indizes, keine Lösung!)
             const clientOptions = q.options.map((o, idx) => ({ id: o.id, index: idx }));
             broadcast({ type: 'QUESTION', options: clientOptions });
         }
@@ -536,14 +529,12 @@
             
             if(!rawId || !name) return alert("Bitte ID und Name eingeben!");
             
-            // "1234" -> "quiz-1234"
+            // Wir erlauben Eingabe von "1234" oder "quiz-1234"
             const gameId = rawId.startsWith('quiz-') ? rawId : 'quiz-' + rawId;
 
             document.getElementById('client-status').innerText = "Verbinde...";
             
-            // Client Peer ebenfalls mit STUN Config
-            peer = new Peer(null, PEER_CONFIG); 
-
+            peer = new Peer(); 
             peer.on('open', () => {
                 conn = peer.connect(gameId);
                 
@@ -562,7 +553,7 @@
                 // Timeout Schutz
                 setTimeout(() => {
                     if(!conn.open) document.getElementById('client-status').innerText = "Host nicht gefunden. ID prüfen?";
-                }, 8000);
+                }, 5000);
             });
         }
 
@@ -608,7 +599,7 @@
         function renderClientButtons(options) {
             const container = document.getElementById('client-options-container');
             container.innerHTML = '';
-            const labels = ["A", "B", "C", "D"];
+            const labels = ["A", "B", "C", "D"]; // Dreieck, Kreis, etc. möglich via SVG
             
             options.forEach((opt) => {
                 const btn = document.createElement('div');
