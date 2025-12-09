@@ -1,0 +1,222 @@
+{
+  "title": "Elektrostatik (Physik Q1)",
+  "passPercentage": 70,
+  "questions": [
+    {
+      "id": 1,
+      "text": "Das Coulombsche Gesetz beschreibt die Kraft zwischen zwei Punktladungen. Wie ändert sich der Betrag der Kraft \\( F \\), wenn der Abstand \\( r \\) zwischen den Ladungen verdoppelt wird?",
+      "options": [
+        {
+          "id": "q1_a",
+          "text": "Die Kraft halbiert sich (\\( F/2 \\)).",
+          "correct": false,
+          "feedback": "Falsch. Die Kraft ist nicht antiproportional zum Abstand, sondern zum Quadrat des Abstands."
+        },
+        {
+          "id": "q1_b",
+          "text": "Die Kraft sinkt auf ein Viertel (\\( F/4 \\)).",
+          "correct": true,
+          "feedback": "Richtig! Das Coulombsche Gesetz lautet \\( F \\sim \\frac{1}{r^2} \\). Bei \\( (2r)^2 \\) erhalten wir den Faktor \\( \\frac{1}{4} \\)."
+        },
+        {
+          "id": "q1_c",
+          "text": "Die Kraft verdoppelt sich (\\( 2F \\)).",
+          "correct": false,
+          "feedback": "Falsch. Bei größerem Abstand nimmt die elektrostatische Kraft ab, nicht zu."
+        },
+        {
+          "id": "q1_d",
+          "text": "Die Kraft sinkt auf ein Achtel (\\( F/8 \\)).",
+          "correct": false,
+          "feedback": "Falsch. Das wäre eine Abhängigkeit von \\( 1/r^3 \\), was hier nicht der Fall ist."
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "text": "Wie ist die elektrische Feldstärke \\( \\vec{E} \\) definiert?",
+      "options": [
+        {
+          "id": "q2_a",
+          "text": "\\( \\vec{E} = \\vec{F} \\cdot q \\)",
+          "correct": false,
+          "feedback": "Falsch. Dies würde bedeuten, dass das Feld stärker ist, je größer die Probeladung ist."
+        },
+        {
+          "id": "q2_b",
+          "text": "\\( \\vec{E} = \\frac{\\vec{F}}{q} \\)",
+          "correct": true,
+          "feedback": "Korrekt. Die Feldstärke ist die Kraft \\( \\vec{F} \\), die auf eine positive Probeladung \\( q \\) wirkt, geteilt durch diese Ladung."
+        },
+        {
+          "id": "q2_c",
+          "text": "\\( \\vec{E} = \\frac{W}{q} \\)",
+          "correct": false,
+          "feedback": "Falsch. Arbeit pro Ladung (\\( W/q \\)) ist die Definition der Spannung \\( U \\) bzw. des Potentials."
+        },
+        {
+          "id": "q2_d",
+          "text": "\\( \\vec{E} = \\frac{1}{4\\pi\\epsilon_0} \\cdot \\frac{Q}{r} \\)",
+          "correct": false,
+          "feedback": "Falsch. Das ist die Formel für das Potential einer Punktladung, nicht für die Feldstärke (dort wäre es \\( r^2 \\))."
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "text": "Welche Aussage über elektrische Feldlinien trifft zu?",
+      "options": [
+        {
+          "id": "q3_a",
+          "text": "Sie verlaufen immer vom Minuspol zum Pluspol.",
+          "correct": false,
+          "feedback": "Falsch. Die Konvention ist genau andersherum."
+        },
+        {
+          "id": "q3_b",
+          "text": "Sie kreuzen sich in Bereichen starker Felder.",
+          "correct": false,
+          "feedback": "Falsch. Feldlinien dürfen sich niemals kreuzen, da an einem Punkt nur eine resultierende Kraftrichtung herrschen kann."
+        },
+        {
+          "id": "q3_c",
+          "text": "Sie verlaufen vom Pluspol zum Minuspol.",
+          "correct": true,
+          "feedback": "Richtig. Die Richtung gibt die Kraftrichtung auf eine positive Probeladung an."
+        },
+        {
+          "id": "q3_d",
+          "text": "Sie sind in einem Plattenkondensator kreisförmig.",
+          "correct": false,
+          "feedback": "Falsch. Im homogenen Feld eines Plattenkondensators sind sie parallel."
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "text": "Ein Elektron fliegt mit der Geschwindigkeit \\( v_0 \\) senkrecht zu den Feldlinien in ein homogenes elektrisches Feld. Welche Bahnkurve beschreibt es?",
+      "options": [
+        {
+          "id": "q4_a",
+          "text": "Eine Kreisbahn.",
+          "correct": false,
+          "feedback": "Falsch. Kreisbahnen entstehen typischerweise in Magnetfeldern (Lorentzkraft), nicht in reinen E-Feldern."
+        },
+        {
+          "id": "q4_b",
+          "text": "Eine Parabelbahn.",
+          "correct": true,
+          "feedback": "Richtig. Ähnlich wie beim waagerechten Wurf wirkt eine konstante Kraft senkrecht zur Bewegungsrichtung, was zu einer Parabelbahn führt."
+        },
+        {
+          "id": "q4_c",
+          "text": "Eine Gerade.",
+          "correct": false,
+          "feedback": "Falsch. Da eine Kraft wirkt (Coulombkraft), wird das Elektron abgelenkt."
+        },
+        {
+          "id": "q4_d",
+          "text": "Eine Sinuskurve.",
+          "correct": false,
+          "feedback": "Falsch. Es gibt keine Rückstellkraft, die eine Schwingung verursachen würde."
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "text": "Die Kapazität \\( C \\) eines Plattenkondensators berechnet sich (im Vakuum) mit \\( C = \\epsilon_0 \\cdot \\frac{A}{d} \\). Was passiert, wenn man den Plattenabstand \\( d \\) halbiert?",
+      "options": [
+        {
+          "id": "q5_a",
+          "text": "Die Kapazität verdoppelt sich.",
+          "correct": true,
+          "feedback": "Richtig. \\( C \\) ist antiproportional zu \\( d \\). Wird \\( d \\) kleiner, wird die Kapazität größer."
+        },
+        {
+          "id": "q5_b",
+          "text": "Die Kapazität halbiert sich.",
+          "correct": false,
+          "feedback": "Falsch. Das wäre der Fall, wenn man die Fläche \\( A \\) halbieren würde."
+        },
+        {
+          "id": "q5_c",
+          "text": "Die Kapazität bleibt gleich.",
+          "correct": false,
+          "feedback": "Falsch. Der Abstand hat direkten Einfluss auf die Kapazität."
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "text": "Ein Plattenkondensator wird aufgeladen und dann von der Spannungsquelle getrennt. Nun werden die Platten auseinandergezogen. Was passiert mit der Spannung \\( U \\)?",
+      "options": [
+        {
+          "id": "q6_a",
+          "text": "Die Spannung sinkt.",
+          "correct": false,
+          "feedback": "Falsch. Überlege: Die Ladung kann nicht abfließen, aber die Kapazität sinkt."
+        },
+        {
+          "id": "q6_b",
+          "text": "Die Spannung bleibt konstant.",
+          "correct": false,
+          "feedback": "Falsch. Das wäre nur der Fall, wenn die Spannungsquelle noch angeschlossen wäre."
+        },
+        {
+          "id": "q6_c",
+          "text": "Die Spannung steigt.",
+          "correct": true,
+          "feedback": "Richtig! Da die Quelle getrennt ist, bleibt die Ladung \\( Q \\) konstant. Durch das Auseinanderziehen sinkt die Kapazität \\( C \\). Wegen \\( U = \\frac{Q}{C} \\) muss die Spannung steigen (man verrichtet mechanische Arbeit gegen die Anziehung der Platten)."
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "text": "Welche Einheit hat die elektrische Feldkonstante \\( \\epsilon_0 \\)?",
+      "options": [
+        {
+          "id": "q7_a",
+          "text": "\\( \\frac{\\text{As}}{\\text{Vm}} \\) bzw. \\( \\frac{\\text{F}}{\\text{m}} \\)",
+          "correct": true,
+          "feedback": "Korrekt. Farad pro Meter ist die übliche Einheit."
+        },
+        {
+          "id": "q7_b",
+          "text": "\\( \\frac{\\text{N}}{\\text{C}} \\)",
+          "correct": false,
+          "feedback": "Falsch. Das ist die Einheit der elektrischen Feldstärke."
+        },
+        {
+          "id": "q7_c",
+          "text": "\\( \\text{V} \\cdot \\text{m} \\)",
+          "correct": false,
+          "feedback": "Falsch."
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "text": "Was besagt der Millikan-Versuch (Schwebemethode eines Öltröpfchens)?",
+      "options": [
+        {
+          "id": "q8_a",
+          "text": "\\( F_{\\text{el}} = F_{\\text{G}} \\) also \\( q \\cdot E = m \\cdot g \\)",
+          "correct": true,
+          "feedback": "Richtig. Die elektrische Kraft wirkt der Gewichtskraft entgegen, sodass das Tröpfchen schwebt."
+        },
+        {
+          "id": "q8_b",
+          "text": "\\( F_{\\text{mag}} = F_{\\text{Zentripetal}} \\)",
+          "correct": false,
+          "feedback": "Falsch. Magnetische Kräfte spielen beim klassischen Millikan-Versuch keine Rolle."
+        },
+        {
+          "id": "q8_c",
+          "text": "\\( E_{\\text{kin}} = E_{\\text{pot}} \\)",
+          "correct": false,
+          "feedback": "Falsch. Das ist der Energieerhaltungssatz, beschreibt aber nicht das Kräftegleichgewicht beim Schweben."
+        }
+      ]
+    }
+  ]
+}
