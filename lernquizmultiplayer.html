@@ -399,7 +399,17 @@
             </div>
 
             <div style="margin-top: 20px;">
-                <p><b>Schritt 2:</b> Warten auf Spieler (<span id="player-count">0</span>)</p>
+                <p><b>Schritt 2:</b> Einstellungen</p>
+                <label style="font-size: 1.1rem; margin-right: 15px;">
+                    <input type="checkbox" id="shuffle-questions" style="width: auto;"> Fragen mischen
+                </label>
+                <label style="font-size: 1.1rem;">
+                    <input type="checkbox" id="shuffle-answers" style="width: auto;"> Antworten mischen
+                </label>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <p><b>Schritt 3:</b> Warten auf Spieler (<span id="player-count">0</span>)</p>
                 <ul id="player-list"></ul>
             </div>
             <br>
@@ -667,10 +677,42 @@
 
         function startGame() {
             if (!quizData) return;
+
+            // Randomisierung
+            const shuffleQ = document.getElementById('shuffle-questions').checked;
+            const shuffleA = document.getElementById('shuffle-answers').checked;
+
+            // Deep Copy verhindern, dass wir das Original kaputt machen (falls Neustart ohne Reload)
+            // Wir klonen das quizData Objekt für die Session
+            const sessionQuestions = JSON.parse(JSON.stringify(quizData.questions));
+
+            if (shuffleQ) {
+                shuffleArray(sessionQuestions);
+            }
+
+            if (shuffleA) {
+                sessionQuestions.forEach(q => {
+                    shuffleArray(q.options);
+                });
+            }
+
+            // Wir überschreiben temporär quizData.questions für das laufende Spiel
+            // Sauberer wäre eine getrennte 'activeQuestions' Variable, aber
+            // um minimal-invasiv zu bleiben, nutzen wir die Struktur.
+            quizData.questions = sessionQuestions;
+
             document.getElementById('host-lobby').classList.add('hidden');
             document.getElementById('host-game').classList.remove('hidden');
             currentQuestionIndex = -1;
             nextQuestion();
+        }
+
+        // --- HELPER: Shuffle ---
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
         }
 
         function nextQuestion() {
