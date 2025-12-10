@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WLAN Client Isolation Tester</title>
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    <style>
+        body { font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #f4f4f4; color: #333; }
+        .box { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        h1 { color: #d32f2f; margin-top: 0; }
+        input { padding: 10px; width: 60%; font-size: 1.1rem; }
+        button { padding: 10px 20px; font-size: 1.1rem; background: #2196f3; color: white; border: none; cursor: pointer; }
+        #my-id { font-size: 1.5rem; font-weight: bold; font-family: monospace; background: #e3f2fd; padding: 5px; }
+        .log { background: #333; color: #0f0; padding: 10px; font-family: monospace; height: 200px; overflow-y: scroll; border-radius: 4px; }
+        .result { font-weight: bold; font-size: 1.2rem; margin-top: 10px; padding: 10px; border-radius: 4px; display: none; }
+        .iso-on { background: #ffcdd2; color: #b71c1c; border: 2px solid #b71c1c; }
+        .iso-off { background: #c8e6c9; color: #1b5e20; border: 2px solid #1b5e20; }
+    </style>
+</head>
+<body>
+
+    <h1>📡 Isolation Tester</h1>
+    <p>Benötigt zwei Geräte im <b>selben WLAN</b>.</p>
+
+    <div class="box">
+        <h3>Ich bin Gerät A (Host)</h3>
+        <p>Deine ID: <span id="my-id">...</span></p>
+    </div>
+
+    <div class="box">
+        <h3>Ich bin Gerät B (Gast)</h3>
+        <p>Gib die ID von Gerät A ein:</p>
+        <input type="text" id="target-id" placeholder="ID von A eingeben">
+        <button onclick="connect()">Verbinden & Testen</button>
+    </div>
+
+    <div id="result-box" class="result"></div>
+
+    <div class="log" id="log">Logbuch gestartet...</div>
+
+    <script>
+        // --- LOGGING ---
+        function log(msg) {
+            const l = document.getElementById('log');
+            l.innerHTML += `<div>${new Date().toLocaleTimeString()}: ${msg}</div>`;
+            l.scrollTop = l.scrollHeight;
+        }
+
+        // --- SETUP ---
+        // Google STUN Server nutzen, um Firewalls zu testen
+        const peer = new Peer(null, {
+            debug: 2,
+            config: { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] }
+        });
+
+        let conn = null;
+
+        peer.on('open', (id) => {
+            document.getElementById('my-id').innerText = id;
+            log("Bereit. Warte auf Partner...");
+        });
+
+        peer.on('connection', (c) => {
+            log("Verbindungsanfrage empfangen...");
+            setupConnection(c);
+        });
+
+        peer.on('error', (err) => {
+            log("FEHLER: " + err);
+        });
+
+        // --- VERBINDUNGSAUFBAU ---
+        function connect() {
+            const target = document.getElementById('target-id').value.trim();
+            if(!target) return alert("ID fehlt");
+            log("Versuche Verbindung zu " + target + "...");
+            conn = peer.connect(target, { reliable: true });
+            setupConnection(conn);
+        }
+
+        function setupConnection(c) {
+            c.on('open', () => {
+                log("✅ Verbindung hergestellt! Analysiere Route...");
+                c.send("PING");
+                analyzeConnection(c);
+            });
+
+            c.on('data', (d) => {
+                if(d === "PING") { log("PING empfangen."); }
+            });
+
+            c.on('close', () => log("Verbindung geschlossen."));
+            
+            // Timeout Check
+            setTimeout(() => {
+                if(!c.open) {
+                    showResult("failed");
+                }
+            }, 5000);
+        }
+
+        // --- DIE ANALYSE (Das Herzstück) ---
+        async function analyzeConnection(connection) {
+            // Wir greifen tief in die WebRTC API, um die Transport-Details zu sehen
+            const pc = peer.getConnection(connection.peer, connection.connectionId).peerConnection;
+            
+            if (!pc) { log("Konnte Connection Stats nicht lesen."); return; }
+
+            try {
+                const stats = await pc.getStats();
+                let pairFound = false;
+
+                stats.forEach(report => {
+                    if (report.type === 'transport') {
+                        // Moderner Weg via Transport Report
+                        // (Hier stehen Details oft verschlüsselt, wir suchen das Candidate Pair)
+                    }
+                    if (report.type === 'candidate-pair' && report.state === 'succeeded') {
+                        pairFound = true;
+                        log(`Aktives Candidate Pair gefunden.`);
+                        
+                        // Details zu den Kandidaten suchen
+                        const localCand = stats.get(report.localCandidateId);
+                        const remoteCand = stats.get(report.remoteCandidateId);
+
+                        if(localCand && remoteCand) {
+                            evaluateCandidates(localCand, remoteCand);
+                        }
+                    }
+                });
+
+                if(!pairFound) {
+                    // Fallback: Manchmal liefert Chrome 'selectedCandidatePair' direkt im Transport
+                    log("Suche alternative Stats...");
+                    // Einfacher Check: Wir schauen, ob die IPs lokal aussehen
+                    // Das ist leider via JS im Browser aus Sicherheitsgründen oft maskiert (.local / mDNS)
+                    // Wir verlassen uns auf den candidateType.
+                }
+
+            } catch (e) {
+                log("Analyse Fehler: " + e);
+            }
+        }
+
+        function evaluateCandidates(local, remote) {
+            log(`Lokal Typ: ${local.candidateType}, IP: ${local.ip || 'maskiert'}`);
+            log(`Remote Typ: ${remote.candidateType}, IP: ${remote.ip || 'maskiert'}`);
+
+            const localType = local.candidateType;
+            const remoteType = remote.candidateType;
+
+            // ANALYSE LOGIK
+            if (localType === 'host' && remoteType === 'host') {
+                // Beide nutzen ihre lokale IP -> Direkte Verbindung im LAN
+                showResult("direct");
+            } else if (localType === 'srflx' || remoteType === 'srflx') {
+                // Server Reflexive -> Verbindung geht über den Router nach draußen und wieder rein
+                // Das bedeutet: Lokale Verbindung war blockiert!
+                showResult("nat");
+            } else if (localType === 'relay' || remoteType === 'relay') {
+                // Geht über einen TURN Server (haben wir hier nicht konfiguriert, aber theoretisch)
+                showResult("relay");
+            } else {
+                // Unklar, aber verbunden
+                showResult("mixed");
+            }
+        }
+
+        function showResult(type) {
+            const box = document.getElementById('result-box');
+            box.style.display = 'block';
+            
+            if (type === 'direct') {
+                box.className = "result iso-off";
+                box.innerHTML = "✅ KEINE Client Isolation!<br>Geräte kommunizieren direkt (LAN zu LAN).<br>Das Spiel sollte funktionieren.";
+            } else if (type === 'nat') {
+                box.className = "result iso-on";
+                box.innerHTML = "⚠️ Client Isolation VERMUTLICH AN.<br>Verbindung klappt nur über NAT-Loopback (Weg über Router-Public-IP).<br>Das ist langsam und in Schulen oft blockiert.";
+            } else if (type === 'failed') {
+                box.className = "result iso-on";
+                box.innerHTML = "❌ VERBINDUNG FEHLGESCHLAGEN.<br>Geräte finden sich nicht.<br>Ursache: <b>Client Isolation</b> oder <b>UDP-Ports blockiert</b>.";
+            } else {
+                box.className = "result iso-on";
+                box.innerHTML = "⚠️ Verbindung indirekt.<br>Keine direkte LAN-Verbindung erkannt.";
+            }
+        }
+
+    </script>
+</body>
+</html>

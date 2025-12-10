@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebRTC Netzwerk Diagnose</title>
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    <style>
+        body { font-family: monospace; max-width: 800px; margin: 20px auto; background: #222; color: #eee; padding: 10px; }
+        h1 { border-bottom: 1px solid #555; padding-bottom: 10px; }
+        .step { margin: 10px 0; padding: 10px; background: #333; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; }
+        .status { font-weight: bold; }
+        .pending { color: #fec107; }
+        .success { color: #4caf50; }
+        .error { color: #f44336; }
+        #log { width: 100%; height: 300px; background: #000; color: #0f0; border: 1px solid #444; overflow-y: scroll; padding: 10px; font-size: 0.9rem; margin-top: 20px; white-space: pre-wrap; }
+        button { background: #2196f3; color: white; border: none; padding: 10px 20px; cursor: pointer; font-size: 1rem; margin-top: 10px; }
+        .analysis { background: #444; padding: 15px; margin-top: 20px; border-left: 5px solid #2196f3; display: none; }
+    </style>
+</head>
+<body>
+
+    <h1>🕵️ WebRTC Netzwerk-Diagnose</h1>
+    <p>Bitte im Schulnetzwerk ausführen. Das Tool simuliert zwei Spieler im selben Browser.</p>
+
+    <div id="steps">
+        <div class="step">1. Browser Unterstützung <span id="s1" class="status pending">...</span></div>
+        <div class="step">2. Signaling Server (HTTPS/WS) <span id="s2" class="status pending">...</span></div>
+        <div class="step">3. STUN Server (UDP Port 19302) <span id="s3" class="status pending">...</span></div>
+        <div class="step">4. P2P Verbindung (Loopback) <span id="s4" class="status pending">...</span></div>
+    </div>
+
+    <button onclick="startDiagnosis()">Diagnose Starten</button>
+    
+    <div id="analysis-box" class="analysis">
+        <h3>📊 Analyse für den Admin:</h3>
+        <p id="analysis-text">Warte auf Testergebnisse...</p>
+    </div>
+
+    <h3>Technisches Protokoll:</h3>
+    <div id="log">Bereit...</div>
+
+    <script>
+        // Logging Helper
+        function log(msg, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const time = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `[${time}] ${msg}\n`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(msg);
+        }
+
+        function setStatus(id, state) {
+            const el = document.getElementById(id);
+            el.className = 'status ' + state;
+            el.innerText = state.toUpperCase();
+        }
+
+        // Config mit Google STUN
+        const PEER_CONFIG = {
+            debug: 2,
+            config: {
+                iceServers: [
+                    { urls: 'stun:stun.l.google.com:19302' },
+                    { urls: 'stun:stun1.l.google.com:19302' }
+                ]
+            }
+        };
+
+        let peerA, peerB;
+        let stunSuccess = false;
+
+        async function startDiagnosis() {
+            document.getElementById('analysis-box').style.display = 'none';
+            document.getElementById('log').innerHTML = "Starte Test...\n";
+            ['s1', 's2', 's3', 's4'].forEach(id => setStatus(id, 'pending'));
+            
+            // SCHRITT 1: Browser Support
+            log("Prüfe WebRTC Support...");
+            if (window.RTCPeerConnection && window.navigator.onLine) {
+                setStatus('s1', 'success');
+                log("Browser unterstützt WebRTC und ist online.");
+            } else {
+                setStatus('s1', 'error');
+                log("FEHLER: Kein WebRTC oder offline.");
+                analyze("browser");
+                return;
+            }
+
+            // SCHRITT 2: Signaling (PeerJS Cloud)
+            log("Verbinde mit PeerJS Cloud Server (Signaling)...");
+            
+            try {
+                peerA = new Peer('diag-a-' + Math.floor(Math.random()*10000), PEER_CONFIG);
+                peerB = new Peer('diag-b-' + Math.floor(Math.random()*10000), PEER_CONFIG);
+
+                await Promise.all([
+                    new Promise((resolve, reject) => {
+                        peerA.on('open', (id) => { log(`Peer A verbunden (ID: ${id})`); resolve(); });
+                        peerA.on('error', (err) => reject(err));
+                    }),
+                    new Promise((resolve, reject) => {
+                        peerB.on('open', (id) => { log(`Peer B verbunden (ID: ${id})`); resolve(); });
+                        peerB.on('error', (err) => reject(err));
+                    })
+                ]);
+                setStatus('s2', 'success');
+                log("Signaling Server erreichbar (Port 443/HTTPS ok).");
+
+            } catch (err) {
+                setStatus('s2', 'error');
+                log("FEHLER beim Signaling: " + err);
+                analyze("signaling");
+                return;
+            }
+
+            // SCHRITT 3 & 4: P2P Verbindung & STUN Check
+            log("Versuche Verbindung Peer A -> Peer B...");
+            
+            // Wir hören auf ICE Candidates, um zu sehen, ob STUN funktioniert
+            // Ein 'srflx' (Server Reflexive) Candidate bedeutet, dass STUN geht.
+            peerA.on('call', () => {}); // Dummy
+            
+            // Wir müssen an das interne RTCPeerConnection Objekt, das PeerJS kapselt, 
+            // aber PeerJS exponiert das nicht direkt sauber vor dem Connect.
+            // Wir starten einfach die Verbindung und analysieren das Ergebnis.
+
+            const conn = peerA.connect(peerB.id, { reliable: true });
+
+            conn.on('open', () => {
+                setStatus('s4', 'success');
+                log("P2P Verbindung erfolgreich hergestellt!");
+                conn.send("PING");
+            });
+
+            conn.on('error', (err) => {
+                log("Verbindungsfehler: " + err);
+                setStatus('s4', 'error');
+            });
+
+            // Empfänger Seite
+            peerB.on('connection', (c) => {
+                c.on('data', (data) => {
+                    log(`Daten empfangen: ${data}`);
+                    if(data === "PING") {
+                        log("Test erfolgreich abgeschlossen.");
+                        if(stunSuccess) {
+                            setStatus('s3', 'success');
+                            analyze("success");
+                        } else {
+                            // Wenn Verbindung klappt, aber kein STUN erkannt wurde (weil wir im selben LAN sind)
+                            // ist das Ergebnis im Schulnetzwerk uneindeutig.
+                            // Wir prüfen gleich genauer.
+                        }
+                    }
+                });
+            });
+
+            // Erweiterter STUN Check (Hack um ICE Candidates zu sehen)
+            setTimeout(() => {
+                // Wir schauen in die internen Connections
+                // PeerJS speichert connections in peerA.connections[peerB.id][0].peerConnection
+                const pconn = peerA.connections[peerB.id]?.[0]?.peerConnection;
+                
+                if(pconn) {
+                    log("Analysiere ICE Candidates...");
+                    // Prüfen ob wir lokale oder öffentliche IPs sehen
+                    // Leider können wir vergangene Candidates schwer abrufen, 
+                    // aber wir schauen auf den Connection State.
+                    log("Connection State: " + pconn.connectionState);
+                    log("ICE Connection State: " + pconn.iceConnectionState);
+                    
+                    if(pconn.iceConnectionState === 'connected' || pconn.iceConnectionState === 'completed') {
+                         // Im lokalen Test klappt das oft auch ohne STUN (host candidates).
+                         // Aber wenn es fehlschlägt, wissen wir Bescheid.
+                    } else {
+                        setStatus('s4', 'error');
+                        setStatus('s3', 'error');
+                        analyze("udp_block");
+                    }
+                }
+                
+                // Fallback Analyse nach Zeitablauf
+                if(document.getElementById('s4').classList.contains('pending')) {
+                    setStatus('s4', 'error');
+                    setStatus('s3', 'error');
+                    analyze("udp_block");
+                } else if (document.getElementById('s4').classList.contains('success')) {
+                    analyze("success");
+                }
+
+            }, 5000); // 5 Sekunden Timeout
+        }
+
+        function analyze(scenario) {
+            const box = document.getElementById('analysis-box');
+            const text = document.getElementById('analysis-text');
+            box.style.display = 'block';
+
+            if (scenario === 'success') {
+                box.style.borderLeftColor = '#4caf50';
+                text.innerHTML = "✅ <b>Gute Nachrichten:</b> Grundsätzlich funktioniert WebRTC hier.<br>Wenn das echte Spiel trotzdem nicht geht, könnte es an der Kommunikation zwischen verschiedenen Geräten (Client Isolation) liegen, obwohl dieser lokale Test ging.";
+            } 
+            else if (scenario === 'signaling') {
+                box.style.borderLeftColor = '#f44336';
+                text.innerHTML = "🚫 <b>Signaling Blockiert:</b> Der Browser kommt nicht zum Vermittlungs-Server.<br><b>Für den Admin:</b> Die Domain <code>0.peerjs.com</code> oder WebSockets auf Port 443 werden blockiert.";
+            } 
+            else if (scenario === 'udp_block') {
+                box.style.borderLeftColor = '#f44336';
+                text.innerHTML = "🚫 <b>P2P/STUN Blockiert:</b> Die Verbindung kommt nicht zustande.<br><b>Wahrscheinliche Ursache:</b> Die Schul-Firewall blockiert <b>UDP Ports</b> (insbesondere Port 19302 für STUN) oder nutzt ein 'Symmetric NAT'.<br><b>Lösung:</b> UDP Port 19302 (Outbound) freigeben oder einen TURN-Server (Relay) auf Port 443 TCP nutzen.";
+            }
+            else {
+                text.innerHTML = "Unbekannter Fehler. Bitte Log prüfen.";
+            }
+        }
+    </script>
+</body>
+</html>
