@@ -84,3 +84,5 @@ Kopiere diesen Code in eine Textdatei und speichere sie als `quiz.json`:
 -   Die Datei muss nicht auf einem Webserver liegen, sie kann auch einfach vom USB-Stick oder Netzlaufwerk gestartet werden (sofern Internetzugriff für PeerJS vorhanden ist).
 -   Spieler können auch später zum Quiz hinzukommen, wenn sie die GAME PIN kennen.
 -   Unter moodle kann mit dem Parameter <b>moodleUser</b> Namen übergeben, so dass die Quizteilnehmernamen festgelegt sind und nicht von den Teilnehmern nachträglich geändert werden können. Unter moodle sollte allerdings nicht die Version mti dem QR-Code verwendet werden.
+-   Bei Problemen helfen evtl. diese zwei Testseiten <b><a href=https://codekoch.github.io/lernquizmultiplayer/Netzwerkcheck.html> Netzwerkcheck.html </a></b> und <b><a href=https://codekoch.github.io/lernquizmultiplayer/Netzwerkcheck_ClientIsolation.html>Netzwerkcheck_ClientIsolation.html </a></b>
+
